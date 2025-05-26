@@ -19,6 +19,7 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
   const [videoEnabled, setVideoEnabled] = useState(true)
   const [remoteVideoEnabled, setRemoteVideoEnabled] = useState(true)
   const [remoteConnected, setRemoteConnected] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null); // For camera/permission errors
 
   const socket = useRef(io(process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:4000')).current
   const peerRef = useRef<SimplePeerInstance | null>(null)
@@ -39,10 +40,23 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
         setStream(s)
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = s
-          localVideoRef.current.play().catch(() => {})
+          localVideoRef.current.play().catch((playError) => {
+            console.error("Error playing local video:", playError);
+            // Optionally set a generic error if play fails, though getUserMedia errors are primary focus
+          });
         }
+        setCameraError(null); // Clear any previous errors
       })
-      .catch(console.error)
+      .catch(err => {
+        console.error("Error accessing media devices:", err);
+        if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+          setCameraError("Nenhuma câmera detectada.");
+        } else if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+          setCameraError("Permissão de acesso à câmera negada.");
+        } else {
+          setCameraError("Erro ao acessar a câmera. Verifique as permissões e dispositivos.");
+        }
+      });
   }, [])
 
   // Handle incoming signaling
@@ -151,38 +165,70 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
     <div className="flex h-full flex-col">
       <div className="relative h-full overflow-hidden rounded-lg bg-muted">
         <video ref={remoteVideoRef} className="h-full w-full object-cover" autoPlay playsInline />
+        {/* Remote video feed takes full space */}
+        <video ref={remoteVideoRef} className="h-full w-full object-cover" autoPlay playsInline />
+
+        {/* Overlay for waiting message */}
         {!remoteConnected && (
-          <div className="absolute inset-0 flex items-center justify-center bg-muted">
-            <span className="text-xl font-semibold">
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <span className="text-lg sm:text-xl font-semibold text-white p-4 rounded-md">
               {isDoctor ? 'Aguardando Paciente...' : 'Aguardando Doutor...'}
             </span>
           </div>
         )}
+
+        {/* Overlay for remote participant's video off */}
         {remoteConnected && !remoteVideoEnabled && (
-          <div className="absolute inset-0 flex items-center justify-center bg-muted">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
-              <span className="text-2xl font-semibold">{remoteInitials}</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full bg-gray-700 text-white">
+              <span className="text-xl sm:text-2xl font-semibold">{remoteInitials}</span>
             </div>
           </div>
         )}
-        <div className="absolute bottom-4 right-4 h-36 w-48 overflow-hidden rounded-lg border-2 border-background shadow-lg">
-          <video ref={localVideoRef} className="h-full w-full object-cover" autoPlay playsInline muted />
-          {!videoEnabled && (
-            <div className="absolute inset-0 flex items-center justify-center bg-muted">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background">
-                <span className="text-lg font-semibold">
+
+        {/* Local video preview (Picture-in-Picture style) */}
+        {/* Responsive size: smaller on mobile, larger on bigger screens */}
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 h-24 w-32 sm:h-28 sm:w-40 md:h-32 md:w-44 lg:h-36 lg:w-48 overflow-hidden rounded-md sm:rounded-lg border border-gray-700 shadow-lg bg-black">
+          {cameraError ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-700 text-white p-1 sm:p-2">
+              <VideoOff className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mb-1 sm:mb-2" />
+              <p className="text-center text-xs sm:text-sm font-semibold">{cameraError}</p>
+            </div>
+          ) : (
+            <video ref={localVideoRef} className="h-full w-full object-cover" autoPlay playsInline muted />
+          )}
+          {/* Overlay for local video off */}
+          {!cameraError && !videoEnabled && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gray-600 text-white">
+                <span className="text-md sm:text-lg font-semibold">
                   {isDoctor ? 'Dr' : 'Me'}
                 </span>
               </div>
             </div>
           )}
         </div>
-        <div className="absolute bottom-4 left-4 flex space-x-2">
-          <Button size="icon" onClick={toggleMute} aria-label={!muted ? 'Mute' : 'Unmute'}>
-            {!muted ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+
+        {/* Controls for local media (mic and video toggle) */}
+        {/* Positioned at the bottom center or bottom left, responsive padding/margin */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-4 sm:translate-x-0 flex space-x-2 sm:space-x-3 z-10 p-1 bg-black bg-opacity-20 rounded-lg">
+          <Button 
+            size="icon" 
+            variant="outline" 
+            onClick={toggleMute} 
+            aria-label={!muted ? 'Mutar Microfone' : 'Desmutar Microfone'}
+            className="h-8 w-8 sm:h-10 sm:w-10 bg-opacity-50 hover:bg-opacity-75 data-[state=on]:bg-red-500"
+          >
+            {!muted ? <Mic className="h-4 w-4 sm:h-5 sm:w-5" /> : <MicOff className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
-          <Button size="icon" onClick={toggleVideo} aria-label={!videoEnabled ? 'Camera Off' : 'Camera On'}>
-            {!videoEnabled ? <VideoOff className="h-5 w-5" /> : <VideoIcon className="h-5 w-5" />}
+          <Button 
+            size="icon" 
+            variant="outline" 
+            onClick={toggleVideo} 
+            aria-label={!videoEnabled ? 'Desligar Câmera' : 'Ligar Câmera'}
+            className="h-8 w-8 sm:h-10 sm:w-10 bg-opacity-50 hover:bg-opacity-75 data-[state=on]:bg-red-500"
+          >
+            {!videoEnabled ? <VideoOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <VideoIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
         </div>
       </div>

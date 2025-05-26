@@ -4,135 +4,100 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Video } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+// Removed useState as appointments will come from props.
+// import { useState } from "react" 
 
-// Mock data for appointments
-const mockAppointments = [
-  {
-    id: "1",
-    patientName: "John Doe",
-    time: "10:30 AM",
-    duration: "30 min",
-    status: "upcoming",
-    reason: "Annual checkup",
-    token: "doc-123-pat-456",
-  },
-  {
-    id: "2",
-    patientName: "Sarah Johnson",
-    time: "11:15 AM",
-    duration: "45 min",
-    status: "upcoming",
-    reason: "Follow-up consultation",
-    token: "doc-123-pat-789",
-  },
-  {
-    id: "3",
-    patientName: "Michael Brown",
-    time: "1:00 PM",
-    duration: "30 min",
-    status: "upcoming",
-    reason: "Prescription renewal",
-    token: "doc-123-pat-101",
-  },
-  {
-    id: "4",
-    patientName: "Emily Wilson",
-    time: "2:30 PM",
-    duration: "60 min",
-    status: "upcoming",
-    reason: "New patient consultation",
-    token: "doc-123-pat-202",
-  },
-  {
-    id: "5",
-    patientName: "Robert Garcia",
-    time: "4:00 PM",
-    duration: "30 min",
-    status: "upcoming",
-    reason: "Test results review",
-    token: "doc-123-pat-303",
-  },
-  {
-    id: "6",
-    patientName: "Lisa Chen",
-    time: "9:00 AM",
-    duration: "30 min",
-    status: "completed",
-    reason: "Follow-up consultation",
-    token: "doc-123-pat-404",
-  },
-  {
-    id: "7",
-    patientName: "David Kim",
-    time: "9:45 AM",
-    duration: "45 min",
-    status: "completed",
-    reason: "Chronic condition management",
-    token: "doc-123-pat-505",
-  },
-  {
-    id: "8",
-    patientName: "Amanda Taylor",
-    time: "10:00 AM",
-    duration: "30 min",
-    status: "completed",
-    reason: "Medication review",
-    token: "doc-123-pat-606",
-  },
-]
+// Define IAppointment here if not imported from a shared location.
+// This interface should match the one used in app/doctor/dashboard/page.tsx
+// and app/patient/appointment/page.tsx
+export interface IAppointment {
+  id: string;
+  patientName?: string; // For doctor's view
+  doctorName?: string;  // For patient's view
+  doctor?: { name: string; specialty?: string }; // More detailed structure
+  time: string;
+  date: string; // Ensure date is handled/formatted appropriately before display
+  duration?: string;
+  status: string; // 'upcoming', 'completed', 'cancelled', 'in-progress', etc.
+  reason?: string;
+  token?: string | null; // For joining the call
+  // Add any other fields that might be relevant from the API response
+}
 
-export function AppointmentList() {
-  const [appointments, setAppointments] = useState(mockAppointments)
+interface AppointmentListProps {
+  appointments: IAppointment[];
+  userRole?: 'doctor' | 'patient'; // To conditionally render patient/doctor names if needed
+}
+
+export function AppointmentList({ appointments, userRole }: AppointmentListProps) {
+  // Removed: const [appointments, setAppointments] = useState(mockAppointments)
+
+  if (!appointments || appointments.length === 0) {
+    return <p className="text-center text-muted-foreground py-4">Nenhum agendamento encontrado.</p>;
+  }
+
+  // Determine column headers based on role or a more generic approach
+  const isDoctorView = userRole === 'doctor'; // Example, can be refined
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <div className="grid grid-cols-6 bg-muted p-3 text-sm font-medium">
-          <div>Patient</div>
-          <div>Time</div>
-          <div>Duration</div>
-          <div>Reason</div>
-          <div>Status</div>
-          <div className="text-right">Action</div>
+      <div className="rounded-md border bg-white">
+        {/* Responsive Grid: Adjust columns for smaller screens */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 bg-gray-50 dark:bg-gray-800 p-3 text-xs sm:text-sm font-medium text-muted-foreground">
+          {/* Conditional rendering of Patient/Doctor name based on context */}
+          <div>{isDoctorView ? "Paciente" : "Doutor(a)"}</div>
+          <div className="hidden md:block">Horário</div>
+          <div className="hidden sm:block">Status</div>
+          <div className="text-right col-span-2 sm:col-span-1 md:col-span-1">Ação</div>
+          {/* Hidden on smaller screens, or re-arrange for priority */}
+          <div className="hidden md:block">Duração</div>
+          <div className="hidden md:block">Motivo</div>
         </div>
-        <div className="divide-y">
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {appointments.map((appointment) => (
-            <div key={appointment.id} className="grid grid-cols-6 p-3 text-sm">
-              <div className="font-medium">{appointment.patientName}</div>
-              <div>{appointment.time}</div>
-              <div>{appointment.duration}</div>
-              <div className="truncate max-w-[150px]">{appointment.reason}</div>
+            <div key={appointment.id} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 p-3 text-xs sm:text-sm items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+              <div className="font-medium text-gray-900 dark:text-gray-100 truncate pr-1">
+                {isDoctorView ? appointment.patientName : (appointment.doctor?.name || appointment.doctorName)}
+              </div>
+              <div className="hidden md:block text-gray-600 dark:text-gray-400">{new Date(appointment.date + 'T' + appointment.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
               <div>
                 <Badge
-                  variant={appointment.status === "completed" ? "outline" : "default"}
+                  variant={appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído" ? "outline" : "default"}
                   className={
-                    appointment.status === "completed"
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-[var(--hospital-primary)] hover:bg-[var(--hospital-primary)]"
+                    appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído"
+                      ? "bg-green-100 text-green-700 border-green-300 text-xs" // Completed style
+                      : appointment.status.toLowerCase() === "cancelled" || appointment.status.toLowerCase() === "cancelado"
+                      ? "bg-red-100 text-red-700 border-red-300 text-xs" // Cancelled style
+                      : "bg-blue-500 hover:bg-blue-600 text-white text-xs" // Primary action color for upcoming/in-progress
                   }
                 >
-                  {appointment.status === "completed" ? "Completed" : "Upcoming"}
+                  {appointment.status}
                 </Badge>
               </div>
-              <div className="text-right">
-                {appointment.status === "upcoming" ? (
+              <div className="text-right col-span-2 sm:col-span-1 md:col-span-1">
+                {/* CTA Buttons */}
+                {appointment.status.toLowerCase() === "upcoming" || appointment.status.toLowerCase() === "pending" || appointment.status.toLowerCase() === "in-progress" || appointment.status.toLowerCase() === "iniciando..." ? (
                   <Button
-                    size="sm"
-                    className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)]"
+                    size="xs" // Using a smaller size for list items
+                    className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)] text-white text-xs sm:text-sm whitespace-nowrap"
                     asChild
                   >
                     <Link href={`/consultation/${appointment.token}`}>
-                      <Video className="mr-2 h-4 w-4" />
-                      Start
+                      <Video className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                      {isDoctorView ? "Iniciar" : "Entrar"}
                     </Link>
                   </Button>
-                ) : (
-                  <Button size="sm" variant="outline" asChild>
-                    <Link href={`/doctor/records/${appointment.id}`}>View Record</Link>
+                ) : appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído" ? (
+                  <Button size="xs" variant="outline" className="text-xs sm:text-sm whitespace-nowrap" asChild>
+                    {/* Assuming a record viewing page exists */}
+                    <Link href={isDoctorView ? `/doctor/records/${appointment.id}` : `/patient/records/${appointment.id}`}>Ver Prontuário</Link>
                   </Button>
+                ) : (
+                  <span className="text-xs text-gray-500">N/A</span> // No action for other statuses like 'cancelled'
                 )}
               </div>
+              <div className="hidden md:block text-gray-600 dark:text-gray-400">{appointment.duration}</div>
+              <div className="hidden md:block text-gray-600 dark:text-gray-400 truncate max-w-[100px] lg:max-w-[150px] pr-1">{appointment.reason}</div>
             </div>
           ))}
         </div>

@@ -89,38 +89,39 @@ export function TextChat({ isDoctor }: { isDoctor: boolean }) {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${
+              className={`flex mb-2 ${ // Added mb-2 for slight spacing between messages
                 message.sender === (isDoctor ? "doctor" : "patient") ? "justify-end" : "justify-start"
               }`}
             >
-              <div className="flex max-w-[80%] items-start space-x-2">
+              {/* Max width of message bubble, responsive avatar size */}
+              <div className={`flex items-start space-x-1 sm:space-x-2 max-w-[75%] sm:max-w-[80%]`}>
                 {message.sender !== (isDoctor ? "doctor" : "patient") && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>{message.sender === "doctor" ? "DR" : "PT"}</AvatarFallback>
+                  <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                    <AvatarFallback className="text-xs sm:text-sm">{message.sender === "doctor" ? "DR" : "PT"}</AvatarFallback>
                   </Avatar>
                 )}
 
-                <div className="space-y-1">
+                <div className="space-y-0.5"> {/* Reduced space-y for tighter packing */}
                   <div
-                    className={`rounded-lg px-3 py-2 text-sm ${
+                    className={`rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm break-words ${ // Added break-words
                       message.sender === (isDoctor ? "doctor" : "patient")
                         ? "bg-[var(--hospital-primary)] text-primary-foreground"
-                        : "bg-muted"
+                        : "bg-muted text-foreground" // Ensure contrast for patient messages
                     }`}
                   >
                     {message.text}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {message.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
+                  <p className="text-xs text-muted-foreground pl-1 sm:pl-0"> {/* Adjusted pl for alignment */}
+                    {message.timestamp.toLocaleTimeString([], { // Consider using a more compact time format if needed
+                      hour: "numeric", // Changed to numeric for potentially shorter time
+                      minute: "2-digit"
                     })}
                   </p>
                 </div>
 
                 {message.sender === (isDoctor ? "doctor" : "patient") && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>{message.sender === "doctor" ? "DR" : "PT"}</AvatarFallback>
+                  <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                     <AvatarFallback className="text-xs sm:text-sm">{message.sender === "doctor" ? "DR" : "PT"}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
@@ -129,22 +130,25 @@ export function TextChat({ isDoctor }: { isDoctor: boolean }) {
         </div>
       </div>
 
-      <div className="border-t p-2 bg-background">
-        <div className="flex space-x-2">
+      {/* Input area styling */}
+      <div className="border-t p-2 sm:p-3 bg-white"> {/* Changed background to white for potentially better theme consistency */}
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <Input
-            placeholder="Digitar mensagem..."
+            placeholder="Digite sua mensagem..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1"
+            className="flex-1 h-10 sm:h-11 text-xs sm:text-sm px-2 sm:px-3" // Adjusted padding and height
+            aria-label="Mensagem"
           />
           <Button
             size="icon"
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)]"
+            className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)] h-10 w-10 sm:h-11 sm:w-11 shrink-0" // Ensure button doesn't shrink too much
+            aria-label="Enviar Mensagem"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
       </div>

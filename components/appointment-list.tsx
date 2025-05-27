@@ -41,9 +41,9 @@ export function AppointmentList({ appointments, userRole }: AppointmentListProps
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border bg-white">
+      <div className="rounded-md border bg-card">
         {/* Responsive Grid: Adjust columns for smaller screens */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 bg-gray-50 dark:bg-gray-800 p-3 text-xs sm:text-sm font-medium text-muted-foreground">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 bg-muted p-3 text-xs sm:text-sm font-medium text-muted-foreground">
           {/* Conditional rendering of Patient/Doctor name based on context */}
           <div>{isDoctorView ? "Paciente" : "Doutor(a)"}</div>
           <div className="hidden md:block">Horário</div>
@@ -53,22 +53,26 @@ export function AppointmentList({ appointments, userRole }: AppointmentListProps
           <div className="hidden md:block">Duração</div>
           <div className="hidden md:block">Motivo</div>
         </div>
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="divide-y divide-border">
           {appointments.map((appointment) => (
-            <div key={appointment.id} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 p-3 text-xs sm:text-sm items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-              <div className="font-medium text-gray-900 dark:text-gray-100 truncate pr-1">
+            <div key={appointment.id} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 p-3 text-xs sm:text-sm items-center hover:bg-muted/50 transition-colors">
+              <div className="font-medium text-foreground truncate pr-1">
                 {isDoctorView ? appointment.patientName : (appointment.doctor?.name || appointment.doctorName)}
               </div>
-              <div className="hidden md:block text-gray-600 dark:text-gray-400">{new Date(appointment.date + 'T' + appointment.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+              <div className="hidden md:block text-muted-foreground">{new Date(appointment.date + 'T' + appointment.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
               <div>
                 <Badge
-                  variant={appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído" ? "outline" : "default"}
+                  variant={
+                    appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído" || appointment.status.toLowerCase() === "cancelled" || appointment.status.toLowerCase() === "cancelado"
+                      ? "outline"
+                      : "default"
+                  }
                   className={
                     appointment.status.toLowerCase() === "completed" || appointment.status.toLowerCase() === "concluído"
-                      ? "bg-green-100 text-green-700 border-green-300 text-xs" // Completed style
+                      ? "bg-primary/10 text-primary border-primary/30 text-xs" // Completed style
                       : appointment.status.toLowerCase() === "cancelled" || appointment.status.toLowerCase() === "cancelado"
-                      ? "bg-red-100 text-red-700 border-red-300 text-xs" // Cancelled style
-                      : "bg-blue-500 hover:bg-blue-600 text-white text-xs" // Primary action color for upcoming/in-progress
+                      ? "bg-destructive/10 text-destructive border-destructive/30 text-xs" // Cancelled style
+                      : "bg-primary hover:bg-primary/80 text-primary-foreground text-xs" // Primary action color for upcoming/in-progress
                   }
                 >
                   {appointment.status}
@@ -79,7 +83,7 @@ export function AppointmentList({ appointments, userRole }: AppointmentListProps
                 {appointment.status.toLowerCase() === "upcoming" || appointment.status.toLowerCase() === "pending" || appointment.status.toLowerCase() === "in-progress" || appointment.status.toLowerCase() === "iniciando..." ? (
                   <Button
                     size="xs" // Using a smaller size for list items
-                    className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)] text-white text-xs sm:text-sm whitespace-nowrap"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm whitespace-nowrap"
                     asChild
                   >
                     <Link href={`/consultation/${appointment.token}`}>
@@ -93,11 +97,11 @@ export function AppointmentList({ appointments, userRole }: AppointmentListProps
                     <Link href={isDoctorView ? `/doctor/records/${appointment.id}` : `/patient/records/${appointment.id}`}>Ver Prontuário</Link>
                   </Button>
                 ) : (
-                  <span className="text-xs text-gray-500">N/A</span> // No action for other statuses like 'cancelled'
+                  <span className="text-xs text-muted-foreground">N/A</span> // No action for other statuses like 'cancelled'
                 )}
               </div>
-              <div className="hidden md:block text-gray-600 dark:text-gray-400">{appointment.duration}</div>
-              <div className="hidden md:block text-gray-600 dark:text-gray-400 truncate max-w-[100px] lg:max-w-[150px] pr-1">{appointment.reason}</div>
+              <div className="hidden md:block text-muted-foreground">{appointment.duration}</div>
+              <div className="hidden md:block text-muted-foreground truncate max-w-[100px] lg:max-w-[150px] pr-1">{appointment.reason}</div>
             </div>
           ))}
         </div>

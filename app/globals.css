@@ -10,14 +10,14 @@
     --card-foreground: 220 15% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 20%;
-    --primary: 210 40% 50%;
+    --primary: 190 75% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 30% 85%;
-    --secondary-foreground: 210 40% 50%;
+    --secondary: 190 65% 88%;
+    --secondary-foreground: 190 70% 35%;
     --muted: 220 15% 90%;
     --muted-foreground: 220 10% 50%;
-    --accent: 200 50% 60%;
-    --accent-foreground: 220 15% 20%;
+    --accent: 180 60% 45%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 15% 85%;
@@ -28,17 +28,12 @@
     /* Sidebar variables */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 15% 20%;
-    --sidebar-primary: 210 40% 50%;
+    --sidebar-primary: 190 75% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 200 50% 60%;
-    --sidebar-accent-foreground: 220 15% 20%;
+    --sidebar-accent: 180 60% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 15% 85%;
-    --sidebar-ring: 210 40% 50%;
-
-    /* Hospital theme variables - will be set dynamically */
-    --hospital-primary: #0ea5e9;
-    --hospital-secondary: #0369a1;
-    --hospital-accent: #38bdf8;
+    --sidebar-ring: 190 75% 58%;
   }
 
   .dark {
@@ -48,14 +43,14 @@
     --card-foreground: 220 20% 90%;
     --popover: 220 15% 20%;
     --popover-foreground: 220 20% 90%;
-    --primary: 210 40% 60%;
-    --primary-foreground: 220 15% 15%;
-    --secondary: 220 15% 25%;
-    --secondary-foreground: 210 40% 60%;
+    --primary: 190 70% 65%;
+    --primary-foreground: 190 90% 20%;
+    --secondary: 190 50% 30%;
+    --secondary-foreground: 190 60% 85%;
     --muted: 220 10% 30%;
     --muted-foreground: 220 15% 70%;
-    --accent: 200 50% 50%;
-    --accent-foreground: 220 15% 15%;
+    --accent: 180 55% 55%;
+    --accent-foreground: 180 90% 15%;
     --destructive: 0 60% 45%;
     --destructive-foreground: 220 20% 90%;
     --border: 220 10% 30%;

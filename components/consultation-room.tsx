@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { HospitalLogo } from "./hospital-logo"
+import { BrandLogo } from "./brand-logo"
 import { VideoChat } from "./video-chat"
 import { TextChat } from "./text-chat"
 import { ClipboardList, FileText, MessageSquare, Pill, X, ChevronUp, ChevronDown, XCircle } from "lucide-react" // Added XCircle
@@ -110,7 +110,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
 
   if (isRoomLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-100">
+      <div className="flex h-screen w-full items-center justify-center bg-background">
         <p className="text-lg text-muted-foreground">Carregando informações da consulta...</p>
         {/* Optional: Add a spinner component here */}
       </div>
@@ -119,11 +119,11 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
 
   if (!isRoomLoading && !consultationData) { // Handles case where token is invalid or API fails critically before setting appointment
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-100">
-        <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <XCircle className="mx-auto h-12 w-12 text-red-500" /> {/* Assuming XCircle is imported */}
-          <h2 className="mt-4 text-xl font-semibold text-gray-700">Erro ao Carregar Consulta</h2>
-          <p className="mt-2 text-gray-500">
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="text-center p-6 bg-card rounded-lg shadow-md">
+          <XCircle className="mx-auto h-12 w-12 text-destructive" /> {/* Assuming XCircle is imported */}
+          <h2 className="mt-4 text-xl font-semibold text-card-foreground">Erro ao Carregar Consulta</h2>
+          <p className="mt-2 text-muted-foreground">
             Não foi possível carregar os detalhes da consulta. Verifique o link ou tente novamente.
           </p>
           <Button onClick={() => router.push('/')} className="mt-6">Voltar para Home</Button>
@@ -134,11 +134,11 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
 
   return (
     // Ensure overall screen height is utilized, flex-col for header and main content area
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col bg-background">
       {/* Header */}
-      <header className="flex h-auto sm:h-16 items-center justify-between border-b bg-white px-4 sm:px-6 py-2 sm:py-0 z-20">
+      <header className="flex h-auto sm:h-16 items-center justify-between border-b bg-card px-4 sm:px-6 py-2 sm:py-0 z-20">
         <div className="flex items-center space-x-2 sm:space-x-4">
-          <HospitalLogo className="h-7 sm:h-8 w-auto" />
+          <BrandLogo className="h-7 sm:h-8 w-auto" />
           <Separator orientation="vertical" className="hidden sm:block h-8" />
           <div className="flex-grow">
             <h1 className="text-sm sm:text-lg font-medium truncate max-w-[200px] sm:max-w-xs md:max-w-md lg:max-w-lg">
@@ -170,9 +170,9 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
 
         {/* Right panel - Medical notes and patient info: Full width on mobile, specific width on lg screens */}
         {/* border-t for mobile when stacked, lg:border-l for larger screens */}
-        <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l bg-white overflow-y-auto order-2 lg:max-h-full"> {/* max-h-full for lg screens with overflow-y-auto */}
+        <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l bg-card overflow-y-auto order-2 lg:max-h-full"> {/* max-h-full for lg screens with overflow-y-auto */}
           <Tabs defaultValue="anamnesis" className="flex flex-col h-full"> {/* h-full to utilize space */}
-            <div className="sticky top-0 z-10 bg-white border-b shadow-sm">
+            <div className="sticky top-0 z-10 bg-card border-b shadow-sm">
               {/* TabsList will allow horizontal scroll on small screens if tabs don't fit */}
               <TabsList className="w-full justify-start p-1 sm:p-2 overflow-x-auto whitespace-nowrap">
                 <TabsTrigger value="anamnesis" className="flex items-center text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-2">
@@ -255,7 +255,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
             <TabsContent value="prescriptions" className="p-4 space-y-4 flex-1 overflow-auto">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium">Receituários</h3> {/* Typo fixed */}
-                <Badge className="bg-[var(--hospital-primary)]">{prescriptions.length} Itens</Badge> {/* Translated */}
+                <Badge className="bg-primary text-primary-foreground">{prescriptions.length} Itens</Badge> {/* Translated */}
               </div>
 
               {isDoctor && (
@@ -268,7 +268,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
                   />
                   <Button
                     onClick={handleAddPrescription}
-                    className="self-end bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)]"
+                    className="self-end bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Adicionar
                   </Button>
@@ -294,7 +294,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
             <TabsContent value="exams" className="p-4 space-y-4 flex-1 overflow-auto">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium">Exames solicitados</h3>
-                <Badge className="bg-[var(--hospital-primary)]">{examOrders.length} Exames</Badge>
+                <Badge className="bg-primary text-primary-foreground">{examOrders.length} Exames</Badge>
               </div>
 
               {isDoctor && (
@@ -307,7 +307,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
                   />
                   <Button
                     onClick={handleAddExamOrder}
-                    className="self-end bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)]"
+                    className="self-end bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Adicionar {/* Changed from Add to Adicionar for consistency */}
                   </Button>
@@ -410,7 +410,7 @@ export function ConsultationRoom({ token, consultationData }: { token: string, c
             </Button>
             <Button
               onClick={handleReturnToDashboard}
-              className="bg-[var(--hospital-primary)] hover:bg-[var(--hospital-secondary)]"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {isDoctor ? "Voltar ao dashboard" : "Sair"}
             </Button>

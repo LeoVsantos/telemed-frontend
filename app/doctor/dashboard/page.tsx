@@ -124,8 +124,8 @@ function DoctorDashboard() {
         <CardContent>
           {isLoading && <p className="text-center text-muted-foreground">Carregando agendamentos...</p>}
           {error && (
-            <div className="text-red-600 bg-red-100 p-3 rounded-md flex items-center">
-              <AlertTriangle className="mr-2 h-5 w-5" />
+            <div className="text-destructive bg-destructive/10 p-3 rounded-md flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5 text-destructive" />
               <p>{error}</p>
             </div>
           )}

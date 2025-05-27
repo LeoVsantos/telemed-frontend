@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { HospitalLogo } from "./hospital-logo"
+import { BrandLogo } from "./brand-logo"
 import { Button } from "@/components/ui/button"
 import { BarChart, Building, Calendar, Home, Settings, Users } from "lucide-react"
 import Link from "next/link"
@@ -22,7 +22,7 @@ export function AdminSidebar() {
     <div className="flex h-full w-64 flex-col border-r bg-card">
       <div className="flex h-16 items-center border-b px-4">
         <div className="flex items-center space-x-2">
-          <HospitalLogo className="h-8 w-auto" />
+          <BrandLogo className="h-8 w-auto" />
           <span className="font-medium">Admin</span>
         </div>
       </div>

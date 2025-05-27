@@ -3,7 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { HospitalLogo } from '@/components/hospital-logo'; // Moved import to top
+import { BrandLogo } from '@/components/brand-logo'; // Moved import to top
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,7 +52,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md sm:p-8">
         <div className="flex justify-center mb-6">
-          <HospitalLogo className="h-16 w-auto" />
+          <BrandLogo className="h-16 w-auto" />
         </div>
         <h1 className="mb-6 text-center text-2xl font-bold text-gray-700 sm:text-3xl">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-6">

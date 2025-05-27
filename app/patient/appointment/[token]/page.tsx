@@ -7,7 +7,7 @@ import { Calendar, Clock, Video, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { HospitalLogo } from "@/components/hospital-logo";
+import { BrandLogo } from "@/components/brand-logo";
 import { getAppointmentDetailsByToken } from "@/lib/axios"; // Assume this will be created
 
 // Define IAppointment interface (can be kept as is from original file if suitable)
@@ -101,7 +101,7 @@ export default function PatientAppointmentTokenPage({ params }: { params: { toke
   return (
     <div className="container mx-auto min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col">
       <header className="flex flex-col items-center space-y-4 mb-6 sm:mb-8">
-        <HospitalLogo className="h-12 sm:h-16 w-auto" />
+        <BrandLogo className="h-12 sm:h-16 w-auto" />
         <h1 className="text-2xl sm:text-3xl font-bold text-center">Detalhes do Agendamento</h1>
       </header>
 

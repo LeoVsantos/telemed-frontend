@@ -151,10 +151,10 @@ export { storeToken, storeRefreshToken, getAuthToken, getRefreshToken, removeTok
 
 // Function to get consultation details by token
 export const getConsultationByToken = (token: string) => {
-  return apiClient.get(`/api/consultations/${token}`);
+  return apiClient.get(`/appointments/${token}`);
 };
 
 // Function to get appointment details by token
 export const getAppointmentDetailsByToken = (token: string) => {
-  return apiClient.get(`/api/appointments/token/${token}`);
+  return apiClient.get(`/appointments/${token}`);
 };

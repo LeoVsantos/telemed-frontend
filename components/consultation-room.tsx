@@ -59,7 +59,7 @@ interface IAppointments {
   // };
 }
 
-export function ConsultationRoom({ token }: { token: string }) {
+export function ConsultationRoom({ token, consultationData }: { token: string, consultationData: IAppointments }) {
   // const params = useSearchParams(); // No longer needed for role determination via ?doctor=true
   const router = useRouter()
   const [isDoctor, setIsDoctor] = useState(false) // This will be set based on API response
@@ -70,50 +70,13 @@ export function ConsultationRoom({ token }: { token: string }) {
   const [examOrders, setExamOrders] = useState<string[]>([])
   const [newExamOrder, setNewExamOrder] = useState("")
   const [isChatOpen, setIsChatOpen] = useState(false)
-  const [appointment, setAppointment] = useState<IAppointments | null>()
   const [isRoomLoading, setIsRoomLoading] = useState(true); // Loading state for initial consultation data
-
-    const editorRef = useRef<RichTextEditorHandle>(null); // Ref for RichTextEditor
-    const [editorContent, setEditorContent] = useState<string>(''); // State to store the editor content
-
-  const handleGetContent = () => {
-    if (editorRef.current) {
-      const content = editorRef.current.getContent(); // Get the editor content
-      setEditorContent(content); // Update the state with the content
-    }
-  };
 
 
   useEffect(() => {
-    
-   const getConsultation = async () => {
-      try {
-        const consultation = await api.get<IAppointments>(`/appointments/${token}`);
-        if(consultation.data){
-          setAppointment(consultation.data);
-          // Set isDoctor based on the role from the API response
-          if (consultation.data.role) {
-            setIsDoctor(consultation.data.role === 'doctor');
-          } else {
-            // Fallback or error if role is not in the response as expected
-            console.warn("Role not provided in appointment data. Defaulting to non-doctor view.");
-            setIsDoctor(false); 
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch consultation data:", error);
-        // Optionally, redirect or show an error message to the user
-        // router.push('/error-page'); // Example redirect
-      } finally {
-        setIsRoomLoading(false); // Stop loading once fetch is complete (success or fail)
-      }
-    }
-
-    if (token) { // Ensure token is available before fetching
-      getConsultation();
-    }
-  // Removed `params` from dependency array as it's no longer used.
-  }, [token, router]) // Added router to dependency array if it's used for redirection in error cases
+    setIsDoctor(consultationData.role === 'doctor');
+    setIsRoomLoading(false);
+  }, [])
 
   const handleEndConsultation = () => {
     setIsConsultationEnded(true)
@@ -154,7 +117,7 @@ export function ConsultationRoom({ token }: { token: string }) {
     );
   }
 
-  if (!appointment) { // Handles case where token is invalid or API fails critically before setting appointment
+  if (!isRoomLoading && !consultationData) { // Handles case where token is invalid or API fails critically before setting appointment
     return (
       <div className="flex h-screen w-full items-center justify-center bg-gray-100">
         <div className="text-center p-6 bg-white rounded-lg shadow-md">
@@ -179,11 +142,11 @@ export function ConsultationRoom({ token }: { token: string }) {
           <Separator orientation="vertical" className="hidden sm:block h-8" />
           <div className="flex-grow">
             <h1 className="text-sm sm:text-lg font-medium truncate max-w-[200px] sm:max-w-xs md:max-w-md lg:max-w-lg">
-              {isDoctor ? `Consulta: ${appointment?.patientName || 'Paciente'}` : `Consulta com: ${appointment?.doctor.name || 'Doutor(a)'}`}
+              {isDoctor ? `Consulta: ${consultationData?.patientName || 'Paciente'}` : `Consulta com: ${consultationData?.doctor.name || 'Doutor(a)'}`}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              {appointment?.datetime ? new Date(appointment.datetime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''}
-              {appointment?.roomId && <span className="hidden sm:inline"> • Sala: {appointment.roomId}</span>}
+              {consultationData?.datetime ? new Date(consultationData.datetime).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : ''}
+              {consultationData?.roomId && <span className="hidden sm:inline"> • Sala: {consultationData.roomId}</span>}
             </p>
           </div>
         </div>
@@ -201,7 +164,7 @@ export function ConsultationRoom({ token }: { token: string }) {
         <div className="relative w-full lg:flex-1 flex flex-col order-1"> {/* order-1 to keep it first visually */}
           {/* Padding adjusted for different screen sizes */}
           <div className="flex-1 p-2 sm:p-4 overflow-hidden h-[50vh] lg:h-auto"> {/* Fixed height for video on mobile for balance */}
-            {appointment?.roomId && <VideoChat roomId={appointment.roomId} isDoctor={isDoctor} />}
+            {consultationData?.roomId && <VideoChat roomId={consultationData.roomId} isDoctor={isDoctor} />}
           </div>
         </div>
 
@@ -251,7 +214,7 @@ export function ConsultationRoom({ token }: { token: string }) {
                     <h4 className="text-xs font-medium text-muted-foreground">Pessoal</h4>
                     <p className="text-sm">
                     {/* Use patientName from appointment, placeholders for other details not in IAppointments */}
-                    {appointment?.patientName || "Nome do paciente não disponível"},{" "}
+                    {consultationData?.patientName || "Nome do paciente não disponível"},{" "}
                     {/* Placeholder for age, replace if API provides it e.g., appointment.patientDetails?.age */}
                     Idade não informada,{" "}
                     {/* Placeholder for gender, replace if API provides it e.g., appointment.patientDetails?.gender */}
@@ -387,7 +350,7 @@ export function ConsultationRoom({ token }: { token: string }) {
             </div>
             {/* Chat content area with defined height, hidden when not open */}
             <div className={`bg-card border-x border-b rounded-b-lg shadow-lg ${isChatOpen ? 'h-64 sm:h-80 overflow-y-auto' : 'h-0 overflow-hidden'}`}>
-                {appointment?.roomId && <TextChat isDoctor={isDoctor} roomId={appointment.roomId} />}
+                {consultationData?.roomId && <TextChat isDoctor={isDoctor} roomId={consultationData.roomId} />}
             </div>
           </div>
 
@@ -410,8 +373,8 @@ export function ConsultationRoom({ token }: { token: string }) {
               <h3 className="text-sm font-medium">Resumo da Consulta</h3>
               <p className="text-sm text-muted-foreground">
                 {isDoctor
-                  ? `Consulta com ${appointment?.patientName} foi concluida.`
-                  : `Sua consulta com o Dr. ${appointment?.doctor.name} foi concluida.`}
+                  ? `Consulta com ${consultationData?.patientName} foi concluida.`
+                  : `Sua consulta com o Dr. ${consultationData?.doctor.name} foi concluida.`}
               </p>
             </div>
 

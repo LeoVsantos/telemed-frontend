@@ -6,10 +6,15 @@ import { getAuthToken, getUser, getConsultationByToken } from "@/lib/axios"; // 
 import { ConsultationRoom } from "@/components/consultation-room";
 
 interface ConsultationData {
-  id: string;
-  doctor: { id: string; name: string };
-  patient: { id: string; name: string };
-  role: 'doctor' | 'patient'; // Changed from expectedRole
+	role: 'doctor' | 'patient'; 
+	patientName: string;      
+	doctor: {                 
+		id: string;
+		name: string;
+		email: string;
+	};
+	datetime: Date;           
+	roomId: string;    
 }
 
 function ConsultationPage({

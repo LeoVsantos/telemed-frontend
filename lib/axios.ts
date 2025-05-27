@@ -148,3 +148,13 @@ export default apiClient;
 
 // Re-export auth utility functions for use in components
 export { storeToken, storeRefreshToken, getAuthToken, getRefreshToken, removeToken, storeUser, getUser };
+
+// Function to get consultation details by token
+export const getConsultationByToken = (token: string) => {
+  return apiClient.get(`/api/consultations/${token}`);
+};
+
+// Function to get appointment details by token
+export const getAppointmentDetailsByToken = (token: string) => {
+  return apiClient.get(`/api/appointments/token/${token}`);
+};

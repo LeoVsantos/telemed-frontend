@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { HospitalLogo } from "@/components/hospital-logo"
+import { BrandLogo } from "@/components/brand-logo"
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-background to-muted">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
-          <HospitalLogo className="h-16 w-auto" />
+          <BrandLogo className="h-16 w-auto" />
           <h1 className="text-3xl font-bold text-center">DEMO: Plataforma de Telemedicina</h1>
           <p className="text-center text-muted-foreground">
             Consultas de vídeo seguras para profissionais de saúde e pacientes

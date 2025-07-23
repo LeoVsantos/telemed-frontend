@@ -2,8 +2,8 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { BrandLogo } from '@/components/brand-logo'; // Moved import to top
+import apiClient from '@/lib/axios';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export default function LoginPage() {
     setIsLoading(true); 
 
     try {
-      const response = await axios.post('/auth', { email, password });
+      const response = await apiClient.post('/auth', { email, password });
       const { user, token, refreshToken } = response.data; 
 
       // Store tokens (localStorage for simplicity, consider secure cookies for production)

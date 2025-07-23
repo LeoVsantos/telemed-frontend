@@ -170,8 +170,8 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
 
         {/* Overlay for waiting message */}
         {!remoteConnected && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <span className="text-lg sm:text-xl font-semibold text-white p-4 rounded-md">
+          <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+            <span className="text-lg sm:text-xl font-semibold text-background p-4 rounded-md">
               {isDoctor ? 'Aguardando Paciente...' : 'Aguardando Doutor...'}
             </span>
           </div>
@@ -179,8 +179,8 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
 
         {/* Overlay for remote participant's video off */}
         {remoteConnected && !remoteVideoEnabled && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full bg-gray-700 text-white">
+          <div className="absolute inset-0 flex items-center justify-center bg-foreground/50">
+            <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full bg-muted-foreground text-background">
               <span className="text-xl sm:text-2xl font-semibold">{remoteInitials}</span>
             </div>
           </div>
@@ -188,9 +188,9 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
 
         {/* Local video preview (Picture-in-Picture style) */}
         {/* Responsive size: smaller on mobile, larger on bigger screens */}
-        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 h-24 w-32 sm:h-28 sm:w-40 md:h-32 md:w-44 lg:h-36 lg:w-48 overflow-hidden rounded-md sm:rounded-lg border border-gray-700 shadow-lg bg-black">
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 h-24 w-32 sm:h-28 sm:w-40 md:h-32 md:w-44 lg:h-36 lg:w-48 overflow-hidden rounded-md sm:rounded-lg border border-border shadow-lg bg-muted">
           {cameraError ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-700 text-white p-1 sm:p-2">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-destructive text-destructive-foreground p-1 sm:p-2">
               <VideoOff className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mb-1 sm:mb-2" />
               <p className="text-center text-xs sm:text-sm font-semibold">{cameraError}</p>
             </div>
@@ -199,8 +199,8 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
           )}
           {/* Overlay for local video off */}
           {!cameraError && !videoEnabled && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75">
-              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gray-600 text-white">
+            <div className="absolute inset-0 flex items-center justify-center bg-muted/75">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-muted-foreground text-background">
                 <span className="text-md sm:text-lg font-semibold">
                   {isDoctor ? 'Dr' : 'Me'}
                 </span>
@@ -211,22 +211,22 @@ export function VideoChat({ isDoctor, roomId }: VideoChatProps) {
 
         {/* Controls for local media (mic and video toggle) */}
         {/* Positioned at the bottom center or bottom left, responsive padding/margin */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-4 sm:translate-x-0 flex space-x-2 sm:space-x-3 z-10 p-1 bg-black bg-opacity-20 rounded-lg">
-          <Button 
-            size="icon" 
-            variant="outline" 
-            onClick={toggleMute} 
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:left-4 sm:translate-x-0 flex space-x-2 sm:space-x-3 z-10 p-1 bg-foreground/20 rounded-lg">
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={toggleMute}
             aria-label={!muted ? 'Mutar Microfone' : 'Desmutar Microfone'}
-            className="h-8 w-8 sm:h-10 sm:w-10 bg-opacity-50 hover:bg-opacity-75 data-[state=on]:bg-red-500"
+            className="h-8 w-8 sm:h-10 sm:w-10 bg-background/50 hover:bg-background/75 data-[state=on]:bg-destructive"
           >
             {!muted ? <Mic className="h-4 w-4 sm:h-5 sm:w-5" /> : <MicOff className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
-          <Button 
-            size="icon" 
-            variant="outline" 
-            onClick={toggleVideo} 
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={toggleVideo}
             aria-label={!videoEnabled ? 'Desligar Câmera' : 'Ligar Câmera'}
-            className="h-8 w-8 sm:h-10 sm:w-10 bg-opacity-50 hover:bg-opacity-75 data-[state=on]:bg-red-500"
+            className="h-8 w-8 sm:h-10 sm:w-10 bg-background/50 hover:bg-background/75 data-[state=on]:bg-destructive"
           >
             {!videoEnabled ? <VideoOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <VideoIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>

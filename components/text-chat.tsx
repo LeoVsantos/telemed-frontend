@@ -131,7 +131,7 @@ export function TextChat({ isDoctor }: { isDoctor: boolean }) {
       </div>
 
       {/* Input area styling */}
-      <div className="border-t p-2 sm:p-3 bg-white"> {/* Changed background to white for potentially better theme consistency */}
+      <div className="border-t p-2 sm:p-3 bg-card"> {/* Changed background to white for potentially better theme consistency */}
         <div className="flex items-center space-x-1 sm:space-x-2">
           <Input
             placeholder="Digite sua mensagem..."

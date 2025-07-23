@@ -34,16 +34,20 @@ function ConsultationPage({
         const data = response.data as ConsultationData;
         setConsultationData(data);
 
+        console.log("Consultation data fetched:", data);
+
         if (data.role === 'doctor') { // Changed from data.expectedRole
           const token = getAuthToken();
           const user = getUser();
+          
+          console.log('user >', user);
 
           if (!token || !user) {
             router.replace('/login');
             return;
           }
 
-          if (user.id !== data.doctor.id) {
+          if (user._id !== data.doctor.id) {
             setError("Unauthorized: You are not the correct doctor for this consultation.");
             setIsLoading(false);
             return;
